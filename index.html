@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - Senior Tax Intelligence</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="drake-wrapper">
+        <div class="status-bar">
+            <div class="status-item">TAX-PAYER: <span id="display-name">---</span></div>
+            <div class="status-item">AGI: <span id="display-agi">$0.00</span></div>
+            <div class="status-item" style="color: #ff3d00;">TOTAL OWE: <span id="display-owe">$0.00</span></div>
+        </div>
+
+        <div class="main-layout">
+            <nav class="sidebar">
+                <h2>FORMS ENGINE</h2>
+                <div class="nav-grp">
+                    <div class="nav-item active" onclick="switchForm('1040')">Form 1040</div>
+                    <div class="nav-item" onclick="switchForm('sch-c')">Schedule C (Business)</div>
+                    <div class="nav-item" onclick="switchForm('sch-se')">Schedule SE (Self-Emp)</div>
+                    <div class="nav-item" onclick="switchForm('8829')">Home Office</div>
+                </div>
+            </nav>
+
+            <main class="workspace">
+                <div id="form-1040" class="tax-form">
+                    <div class="form-title">FORM 1040 - MAIN PAGE</div>
+                    <div class="input-row"><span class="ln">L1</span><label>Wages, Salaries (W-2)</label><input type="number" id="in-w2" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">L8</span><label>Business Income (Sch C)</label><input type="number" id="in-schc-link" readonly></div>
+                    <div class="input-row highlight"><span class="ln">L11</span><label>Adjusted Gross Income (AGI)</label><input type="number" id="in-agi" readonly></div>
+                </div>
+
+                <div id="form-schc" class="tax-form hidden">
+                    <div class="form-title">SCHEDULE C - PROFIT OR LOSS</div>
+                    <div class="input-row"><span class="ln">1</span><label>Gross Receipts</label><input type="number" id="in-gross" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">28</span><label>Total Expenses</label><input type="number" id="in-exp" oninput="taxEngine()"></div>
+                    <div class="input-row highlight"><span class="ln">31</span><label>NET PROFIT</label><input type="number" id="in-net" readonly></div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-pdf" onclick="window.print()">PRINT TRANSCRIPTION</button>
+                    <button class="btn-del" onclick="resetSystem()">DELETE ALL DATA</button>
+                </div>
+            </main>
+
+            <aside class="aura-ai">
+                <div class="aura-header">🧠 ESPECIALISTA AURA</div>
+                <div id="aura-chat" class="chat-box">
+                    <p class="bot">Bienvenido. Soy el especialista en Finanzas e Impuestos del IRS. ¿Qué duda técnica desea resolver sobre la 1040 o Schedule C?</p>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="aura-query" placeholder="Pregunte sobre el IRS..." onkeypress="handleAura(event)">
+                </div>
+            </aside>
+        </div>
+    </div>
+    <script src="engine.js"></script>
+</body>
+</html>
