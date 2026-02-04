@@ -1,0 +1,23 @@
+:root { --drake-gray: #e0e0e0; --blue: #003366; --gold: #d4af37; --text: #1a1a1a; }
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #2c3e50; }
+.drake-wrapper { height: 100vh; display: flex; flex-direction: column; }
+.status-bar { background: #000; color: #0f0; padding: 10px 20px; display: flex; justify-content: space-between; font-family: monospace; font-size: 1.1rem; border-bottom: 2px solid var(--gold); }
+.main-layout { display: grid; grid-template-columns: 200px 1fr 300px; flex-grow: 1; overflow: hidden; }
+
+.sidebar { background: #1c2833; color: white; padding: 10px; }
+.nav-item { padding: 10px; font-size: 0.8rem; cursor: pointer; border-bottom: 1px solid #34495e; }
+.nav-item.active { background: var(--gold); color: #000; font-weight: bold; }
+
+.workspace { background: white; padding: 25px; overflow-y: auto; }
+.form-title { background: #eee; padding: 8px; font-weight: bold; border: 1px solid #ccc; margin-bottom: 15px; }
+.input-row { display: grid; grid-template-columns: 40px 1fr 150px; border-bottom: 1px solid #eee; align-items: center; }
+.ln { background: #ddd; text-align: center; padding: 8px; font-weight: bold; font-size: 0.8rem; }
+.highlight { background: #fffde7; }
+input { border: none; padding: 10px; text-align: right; font-size: 1rem; outline: none; background: transparent; }
+
+.aura-ai { background: #fdfefe; border-left: 2px solid #ccc; display: flex; flex-direction: column; }
+.aura-header { background: var(--blue); color: white; padding: 15px; text-align: center; font-weight: bold; }
+.chat-box { flex-grow: 1; padding: 10px; overflow-y: auto; font-size: 0.85rem; }
+.chat-input input { width: 100%; border-top: 1px solid #ccc; background: white; text-align: left; }
+.bot { color: #2e7d32; font-weight: bold; }
+.hidden { display: none; }
