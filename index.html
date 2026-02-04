@@ -10,82 +10,131 @@
 </head>
 <body>
 
-<!-- Header -->
 <div class="dashboard-header">
-    <div style="display: flex; gap: 40px; align-items: center;">
-        <span>AL CIELO v2.7 | <b id="client-view">TAX OFFICE MODE</b></span>
+    <div style="display:flex; gap:30px; align-items:center;">
+        <span>AL CIELO v2.7 | <b id="client-view">CLIENT MODE</b></span>
         <span>AGI: <b id="top-agi">$0.00</b></span>
-        <span>REFUND: <b id="top-refund" style="color: #00FF00;">$0.00</b></span>
+        <span>REFUND: <b id="top-refund" style="color:#00FF00;">$0.00</b></span>
     </div>
     <div id="risk-box" class="risk-badge risk-low">AUDIT RISK: LOW</div>
 </div>
 
 <div class="main-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="mode-selector">
-            <button style="width: 100%; background: var(--gold); margin-bottom: 10px;" onclick="switchMode('Client')">VIEW AS CLIENT</button>
-            <button style="width: 100%; background: var(--drake-blue); color: white;" onclick="switchMode('CPA')">VIEW AS PRO (CPA)</button>
-        </div>
-        <div class="nav-grp">Tax Intelligence</div>
-        <div class="nav-item active" onclick="tab('1040')">Form 1040 (Optimization)</div>
-        <div class="nav-item" onclick="tab('schc')">Business Strategy (Sch C)</div>
-        <div class="nav-grp">Legal & Audit</div>
-        <div class="nav-item" onclick="tab('risk')">Risk Analysis Report</div>
-        <div class="nav-item" onclick="tab('docs')">Audit Trail & Logs</div>
-    </aside>
 
-    <!-- Workspace -->
-    <main class="workspace">
-        <!-- Form 1040 -->
-        <div id="t-1040">
-            <div class="form-header">
-                Interactive Form 1040 - Tax Year 2026
-                <span style="font-size: 0.8rem; font-weight: normal;">(Real-time Triangulation Active)</span>
-            </div>
-            
-            <div class="tax-card">
-                <div class="card-header"><span>Identity & Context</span></div>
-                <div class="tax-row"><div class="ln">NAME</div><div class="desc">Taxpayer Name</div><input type="text" id="tax_name" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">AGE</div><div class="desc">Age (Catch-up limits)</div><input type="number" id="age" value="50" oninput="taxEngine()"></div>
-            </div>
+<aside class="sidebar">
+    <div class="mode-selector">
+        <button style="width:100%; background:var(--gold); margin-bottom:10px;" onclick="switchMode('Client')">VIEW AS CLIENT</button>
+        <button style="width:100%; background:var(--drake-blue); color:white;" onclick="switchMode('CPA')">VIEW AS PRO (CPA)</button>
+    </div>
 
-            <div class="tax-card">
-                <div class="card-header"><span>Income & Assets</span></div>
-                <div class="tax-row"><div class="ln">W-2</div><div class="desc">W-2 Wages</div><input type="number" id="in-w2" value="0" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">Gross</div><div class="desc">Business Gross (Sch C)</div><input type="number" id="in-gross" value="0" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">Expenses</div><div class="desc">Business Expenses</div><input type="number" id="in-exp" value="0" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">Net</div><div class="desc">Net Profit</div><input type="number" id="in-net" readonly></div>
-                <div class="tax-row"><div class="ln">AGI</div><div class="desc">Adjusted Gross Income</div><input type="number" id="in-agi" readonly></div>
+    <div class="nav-grp">Tax Intelligence</div>
+    <div class="nav-item active" onclick="tab('1040')">Form 1040</div>
+    <div class="nav-item" onclick="tab('schc')">Business Strategy (Sch C)</div>
+    <div class="nav-grp">Legal & Audit</div>
+    <div class="nav-item" onclick="tab('risk')">Risk Analysis Report</div>
+</aside>
+
+<main class="workspace">
+    <div id="t-1040">
+        <div class="form-header">Interactive Form 1040 - Tax Year 2026</div>
+
+        <div class="tax-card">
+            <div class="card-header">Identity & Context</div>
+            <div class="tax-row">
+                <div class="ln">NAME</div>
+                <div class="desc">Taxpayer Name</div>
+                <input type="text" id="tax_name" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">AGE</div>
+                <div class="desc">Age (affects catch-up contributions)</div>
+                <input type="number" id="tax_age" value="50" oninput="taxEngine()">
             </div>
         </div>
 
-        <!-- Schedule C -->
-        <div id="t-schc" class="hidden">
-            <div class="form-header">Schedule C - Business Strategy</div>
-            <div class="tax-card">
-                <div class="tax-row"><div class="ln">1</div><div class="desc">Gross Receipts</div><input type="number" id="gross" value="0" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">28</div><div class="desc">Business Expenses</div><input type="number" id="exp" value="0" oninput="taxEngine()"></div>
-                <div class="tax-row"><div class="ln">31</div><div class="desc">Net Profit</div><input type="number" id="in-schc-link" readonly></div>
+        <div class="tax-card">
+            <div class="card-header">Income & Assets</div>
+            <div class="tax-row">
+                <div class="ln">W-2</div>
+                <div class="desc">W-2 Wages</div>
+                <input type="number" id="in-w2" value="0" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">Gross</div>
+                <div class="desc">Gross Receipts / Business Income</div>
+                <input type="number" id="in-gross" value="0" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">Expenses</div>
+                <div class="desc">Business Expenses</div>
+                <input type="number" id="in-exp" value="0" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">Net</div>
+                <div class="desc">Net Profit</div>
+                <input type="number" id="in-net" readonly>
+            </div>
+            <div class="tax-row">
+                <div class="ln">AGI</div>
+                <div class="desc">Adjusted Gross Income</div>
+                <input type="number" id="in-agi" readonly>
+            </div>
+            <div class="tax-row">
+                <div class="ln">Taxable</div>
+                <div class="desc">Taxable Income</div>
+                <input type="number" id="in-taxable" readonly>
+            </div>
+            <div class="tax-row">
+                <div class="ln">Total Tax</div>
+                <div class="desc">Income + Self-Employment Tax</div>
+                <input type="number" id="display-owe" readonly>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- AURA Panel -->
-    <aside class="aura-panel">
-        <div class="aura-header">🧠 AURA SENIOR TAX ADVISOR</div>
-        <div class="aura-chat" id="aura-chat">
-            <div class="msg">Bienvenido. Pregunte cualquier duda sobre impuestos, IRS y finanzas 2026.</div>
+    <div id="t-schc" class="hidden">
+        <div class="form-header">Schedule C - Business Strategy</div>
+        <div class="tax-card">
+            <div class="tax-row">
+                <div class="ln">Gross</div>
+                <div class="desc">Business Gross Receipts</div>
+                <input type="number" id="sc-gross" value="0" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">Expenses</div>
+                <div class="desc">Business Expenses</div>
+                <input type="number" id="sc-exp" value="0" oninput="taxEngine()">
+            </div>
+            <div class="tax-row">
+                <div class="ln">Net</div>
+                <div class="desc">Net Profit</div>
+                <input type="number" id="sc-net" readonly>
+            </div>
         </div>
-        <div class="aura-input-area">
-            <input type="text" id="aura-query" placeholder="Escribe tu pregunta..." onkeypress="handleAura(event)">
-        </div>
-    </aside>
+    </div>
+
+    <div id="t-risk" class="hidden">
+        <div class="form-header">Audit & Risk Analysis</div>
+        <div id="risk-analysis" style="padding:15px;">All alerts and audit warnings will appear here.</div>
+    </div>
+
+</main>
+
+<aside class="aura-panel">
+    <div class="aura-header">🧠 AURA SENIOR ADVISOR</div>
+    <div class="aura-chat" id="aura-chat">
+        <div class="msg">AURA: Bienvenido al modo Tax Intelligence. Estoy listo para responder todas sus preguntas fiscales y financieras.</div>
+    </div>
+    <div class="aura-input-area">
+        <input type="text" id="aura-input" placeholder="Pregunte a AURA sobre taxes, deducciones, IRS..." onkeypress="handleAura(event)">
+    </div>
+</aside>
+
 </div>
 
 <div class="footer">
     <button class="btn-delete" onclick="resetSystem()">Clear All Data</button>
-    <button class="btn-doubts" onclick="clearDoubts()">Explain Every Line</button>
+    <button class="btn-doubts" onclick="explainAll()">Explain Every Line</button>
     <button class="btn-print" onclick="window.print()">Print PDF & Audit Trail</button>
 </div>
 
