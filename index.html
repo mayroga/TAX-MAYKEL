@@ -21,23 +21,54 @@
                     <div class="nav-item active" onclick="switchForm('1040')">Form 1040</div>
                     <div class="nav-item" onclick="switchForm('sch-c')">Schedule C (Business)</div>
                     <div class="nav-item" onclick="switchForm('sch-se')">Schedule SE (Self-Emp)</div>
-                    <div class="nav-item" onclick="switchForm('8829')">Home Office</div>
+                    <div class="nav-item" onclick="switchForm('8829')">Form 8829 (Home Office)</div>
                 </div>
             </nav>
 
             <main class="workspace">
                 <div id="form-1040" class="tax-form">
                     <div class="form-title">FORM 1040 - MAIN PAGE</div>
-                    <div class="input-row"><span class="ln">L1</span><label>Wages, Salaries (W-2)</label><input type="number" id="in-w2" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">NAME</span><label>Legal Name of Taxpayer</label><input type="text" id="tax_name" oninput="updateUI()"></div>
+                    <div class="input-row"><span class="ln">S</span><label>Filing Status</label>
+                        <select id="filing_status" onchange="taxEngine()">
+                            <option value="single">Single</option>
+                            <option value="mfj">Married Filing Jointly</option>
+                            <option value="mfs">Married Filing Separately</option>
+                            <option value="hoh">Head of Household</option>
+                        </select>
+                    </div>
+                    <div class="input-row"><span class="ln">L1</span><label>Wages, Salaries (W-2)</label><input type="number" id="in-w2" value="0" oninput="taxEngine()"></div>
                     <div class="input-row"><span class="ln">L8</span><label>Business Income (Sch C)</label><input type="number" id="in-schc-link" readonly></div>
                     <div class="input-row highlight"><span class="ln">L11</span><label>Adjusted Gross Income (AGI)</label><input type="number" id="in-agi" readonly></div>
                 </div>
 
                 <div id="form-schc" class="tax-form hidden">
                     <div class="form-title">SCHEDULE C - PROFIT OR LOSS</div>
-                    <div class="input-row"><span class="ln">1</span><label>Gross Receipts</label><input type="number" id="in-gross" oninput="taxEngine()"></div>
-                    <div class="input-row"><span class="ln">28</span><label>Total Expenses</label><input type="number" id="in-exp" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">1</span><label>Gross Receipts</label><input type="number" id="in-gross" value="0" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">28</span><label>Total Expenses (Excl Home Office)</label><input type="number" id="in-exp" value="0" oninput="taxEngine()"></div>
+                    <div class="input-row"><span class="ln">30</span><label>In-Home-Office Deduction</label><input type="number" id="in-home-office-link" readonly></div>
                     <div class="input-row highlight"><span class="ln">31</span><label>NET PROFIT</label><input type="number" id="in-net" readonly></div>
+                </div>
+
+                <div id="form-8829" class="tax-form hidden">
+                    <div class="form-title">FORM 8829 - HOME OFFICE EXPENSES</div>
+                    <div class="input-row"><span class="ln">Method</span><label>Calculation Method</label>
+                        <select id="ho-method" onchange="taxEngine()">
+                            <option value="simplified">Simplified Method ($5/sq ft)</option>
+                            <option value="actual">Actual Expenses</option>
+                        </select>
+                    </div>
+                    <div id="ho-simplified-inputs" class="input-group">
+                        <div class="input-row"><span class="ln">5</span><label>Square Footage (Max 300)</label><input type="number" id="ho-sqft" value="0" oninput="taxEngine()"></div>
+                    </div>
+                    <div id="ho-actual-inputs" class="input-group hidden">
+                        <div class="input-row"><span class="ln">20</span><label>Mortgage Interest</label><input type="number" id="ho-mort-int" value="0" oninput="taxEngine()"></div>
+                        <div class="input-row"><span class="ln">22</span><label>Real Estate Taxes</label><input type="number" id="ho-real-estate-tax" value="0" oninput="taxEngine()"></div>
+                        <div class="input-row"><span class="ln">27</span><label>Utilities</label><input type="number" id="ho-utilities" value="0" oninput="taxEngine()"></div>
+                        <div class="input-row"><span class="ln">28</span><label>Repairs/Maintenance</label><input type="number" id="ho-repairs" value="0" oninput="taxEngine()"></div>
+                        <div class="input-row highlight"><span class="ln">36</span><label>Total Actual Deduction</label><input type="number" id="ho-total-actual" readonly></div>
+                        <div class="input-row"><span class="ln">41</span><label>Business % of Home</label><input type="number" id="ho-biz-percent" value="0" oninput="taxEngine()"></div>
+                    </div>
                 </div>
                 
                 <div class="action-buttons">
@@ -57,6 +88,6 @@
             </aside>
         </div>
     </div>
-    <script src="engine.js"></script>
+    <script src="tax_data.js"></script> <script src="engine.js"></script>
 </body>
 </html>
