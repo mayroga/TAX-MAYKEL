@@ -102,8 +102,7 @@ function pushAura(msg, type = "normal") {
     chat.scrollTop = chat.scrollHeight;
 }
 
-function updateAuraAdvise(net, exp, gross, agi, filingStatus) {
-    if(expenses > (gross * 0.6) && gross > 0) {
+if (exp > (gross * 0.6) && gross > 0) {
         pushAura("⚠️ ALERTA: Gastos excesivos detectados. El IRS podría cuestionar la rentabilidad del negocio. Prepare pruebas de millaje, recibos y justificación.", "alert");
     }
     if(net > 60000 && filingStatus !== 'mfs') { // S-Corp no aplica igual para MFS
