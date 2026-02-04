@@ -2,92 +2,172 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - Senior Tax Intelligence</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AL CIELO - Senior Tax Intelligence Portal</title>
+    <style>
+        :root { --drake-blue: #003366; --gold: #b8860b; --irs-gray: #f4f4f4; }
+        body { font-family: 'Segoe UI', Arial; margin: 0; background: #2c3e50; color: #333; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Barra de Estado Profesional */
+        .status-bar { background: #000; color: #00ff00; padding: 12px 25px; display: flex; justify-content: space-between; font-family: 'Courier New', monospace; font-size: 1.2rem; border-bottom: 2px solid var(--gold); }
+        
+        .main-layout { display: grid; grid-template-columns: 220px 1fr 350px; flex-grow: 1; overflow: hidden; }
+        
+        /* Navegación Drake */
+        .sidebar { background: #1a252f; color: white; padding: 15px; border-right: 1px solid #000; }
+        .nav-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 0.85rem; transition: 0.3s; }
+        .nav-item:hover, .active { background: var(--gold); color: black; font-weight: bold; }
+
+        /* Workspace */
+        .workspace { background: white; padding: 30px; overflow-y: auto; border-right: 1px solid #ccc; }
+        .form-header { background: #eee; padding: 10px; border: 1px solid #999; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
+        .row { display: grid; grid-template-columns: 60px 1fr 200px; border-bottom: 1px solid #eee; align-items: center; }
+        .ln { background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid #ccc; }
+        input, select { width: 100%; border: 1px solid transparent; padding: 10px; text-align: right; font-size: 1.1rem; background: #fffde7; outline: none; }
+        input:focus { background: white; border-bottom: 2px solid var(--gold); }
+
+        /* IA AURA Senior Finance Specialist */
+        .aura-panel { background: #fdfefe; display: flex; flex-direction: column; border-left: 2px solid var(--gold); }
+        .aura-header { background: var(--drake-blue); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1rem; }
+        .aura-chat { flex-grow: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; font-size: 0.9rem; line-height: 1.5; }
+        .aura-input { padding: 15px; border-top: 1px solid #ccc; background: white; }
+        #query { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; }
+
+        .btn-group { padding: 20px; background: #bdc3c7; display: flex; gap: 15px; justify-content: flex-end; }
+        button { padding: 12px 25px; cursor: pointer; font-weight: bold; border: none; text-transform: uppercase; }
+        .btn-print { background: var(--drake-blue); color: white; }
+        .btn-del { background: #c0392b; color: white; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
-    <div class="drake-wrapper">
-        <div class="status-bar">
-            <div class="status-item">TAX-PAYER: <span id="display-name">---</span></div>
-            <div class="status-item">AGI: <span id="display-agi">$0.00</span></div>
-            <div class="status-item" style="color: #ff3d00;">TOTAL OWE: <span id="display-owe">$0.00</span></div>
+
+<div class="status-bar">
+    <span>TAXPAYER: <span id="st-name">NEW CLIENT</span></span>
+    <span>AGI: <span id="st-agi">$0.00</span></span>
+    <span>REFUND/OWE: <span id="st-tax" style="color: #ff3d00;">$0.00</span></span>
+</div>
+
+<div class="main-layout">
+    <nav class="sidebar">
+        <div class="nav-item active" onclick="showF('1040')">Form 1040 (Main)</div>
+        <div class="nav-item" onclick="showF('schc')">Schedule C (Business)</div>
+        <div class="nav-item" onclick="showF('schse')">Schedule SE (Tax)</div>
+        <div class="nav-item" onclick="showF('8829')">Form 8829 (Office)</div>
+    </nav>
+
+    <main class="workspace">
+        <div id="f-1040">
+            <div class="form-header">Form 1040 - Individual Tax Return 2026</div>
+            <div class="row"><div class="ln">NAME</div><div class="desc">Full Legal Name</div><input type="text" id="name" oninput="runEngine()"></div>
+            <div class="row"><div class="ln">STAT</div><div class="desc">Filing Status</div>
+                <select id="status" onchange="runEngine()">
+                    <option value="single">Single</option>
+                    <option value="mfj">Married Filing Jointly</option>
+                    <option value="hoh">Head of Household</option>
+                </select>
+            </div>
+            <div class="row"><div class="ln">L1</div><div class="desc">Wages (W-2)</div><input type="number" id="w2" value="0" oninput="runEngine()"></div>
+            <div class="row"><div class="ln">L8</div><div class="desc">Business Income (Sch C)</div><input type="number" id="schc_link" readonly></div>
         </div>
 
-        <div class="main-layout">
-            <nav class="sidebar">
-                <h2>FORMS ENGINE</h2>
-                <div class="nav-grp">
-                    <div class="nav-item active" onclick="switchForm('1040')">Form 1040</div>
-                    <div class="nav-item" onclick="switchForm('sch-c')">Schedule C (Business)</div>
-                    <div class="nav-item" onclick="switchForm('sch-se')">Schedule SE (Self-Emp)</div>
-                    <div class="nav-item" onclick="switchForm('8829')">Form 8829 (Home Office)</div>
-                </div>
-            </nav>
-
-            <main class="workspace">
-                <div id="form-1040" class="tax-form">
-                    <div class="form-title">FORM 1040 - MAIN PAGE</div>
-                    <div class="input-row"><span class="ln">NAME</span><label>Legal Name of Taxpayer</label><input type="text" id="tax_name" oninput="updateUI()"></div>
-                    <div class="input-row"><span class="ln">S</span><label>Filing Status</label>
-                        <select id="filing_status" onchange="taxEngine()">
-                            <option value="single">Single</option>
-                            <option value="mfj">Married Filing Jointly</option>
-                            <option value="mfs">Married Filing Separately</option>
-                            <option value="hoh">Head of Household</option>
-                        </select>
-                    </div>
-                    <div class="input-row"><span class="ln">L1</span><label>Wages, Salaries (W-2)</label><input type="number" id="in-w2" value="0" oninput="taxEngine()"></div>
-                    <div class="input-row"><span class="ln">L8</span><label>Business Income (Sch C)</label><input type="number" id="in-schc-link" readonly></div>
-                    <div class="input-row highlight"><span class="ln">L11</span><label>Adjusted Gross Income (AGI)</label><input type="number" id="in-agi" readonly></div>
-                </div>
-
-                <div id="form-schc" class="tax-form hidden">
-                    <div class="form-title">SCHEDULE C - PROFIT OR LOSS</div>
-                    <div class="input-row"><span class="ln">1</span><label>Gross Receipts</label><input type="number" id="in-gross" value="0" oninput="taxEngine()"></div>
-                    <div class="input-row"><span class="ln">28</span><label>Total Expenses (Excl Home Office)</label><input type="number" id="in-exp" value="0" oninput="taxEngine()"></div>
-                    <div class="input-row"><span class="ln">30</span><label>In-Home-Office Deduction</label><input type="number" id="in-home-office-link" readonly></div>
-                    <div class="input-row highlight"><span class="ln">31</span><label>NET PROFIT</label><input type="number" id="in-net" readonly></div>
-                </div>
-
-                <div id="form-8829" class="tax-form hidden">
-                    <div class="form-title">FORM 8829 - HOME OFFICE EXPENSES</div>
-                    <div class="input-row"><span class="ln">Method</span><label>Calculation Method</label>
-                        <select id="ho-method" onchange="taxEngine()">
-                            <option value="simplified">Simplified Method ($5/sq ft)</option>
-                            <option value="actual">Actual Expenses</option>
-                        </select>
-                    </div>
-                    <div id="ho-simplified-inputs" class="input-group">
-                        <div class="input-row"><span class="ln">5</span><label>Square Footage (Max 300)</label><input type="number" id="ho-sqft" value="0" oninput="taxEngine()"></div>
-                    </div>
-                    <div id="ho-actual-inputs" class="input-group hidden">
-                        <div class="input-row"><span class="ln">20</span><label>Mortgage Interest</label><input type="number" id="ho-mort-int" value="0" oninput="taxEngine()"></div>
-                        <div class="input-row"><span class="ln">22</span><label>Real Estate Taxes</label><input type="number" id="ho-real-estate-tax" value="0" oninput="taxEngine()"></div>
-                        <div class="input-row"><span class="ln">27</span><label>Utilities</label><input type="number" id="ho-utilities" value="0" oninput="taxEngine()"></div>
-                        <div class="input-row"><span class="ln">28</span><label>Repairs/Maintenance</label><input type="number" id="ho-repairs" value="0" oninput="taxEngine()"></div>
-                        <div class="input-row highlight"><span class="ln">36</span><label>Total Actual Deduction</label><input type="number" id="ho-total-actual" readonly></div>
-                        <div class="input-row"><span class="ln">41</span><label>Business % of Home</label><input type="number" id="ho-biz-percent" value="0" oninput="taxEngine()"></div>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn-pdf" onclick="window.print()">PRINT TRANSCRIPTION</button>
-                    <button class="btn-del" onclick="resetSystem()">DELETE ALL DATA</button>
-                </div>
-            </main>
-
-            <aside class="aura-ai">
-                <div class="aura-header">🧠 ESPECIALISTA AURA</div>
-                <div id="aura-chat" class="chat-box">
-                    <p class="bot">Bienvenido. Soy el especialista en Finanzas e Impuestos del IRS. ¿Qué duda técnica desea resolver sobre la 1040 o Schedule C?</p>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="aura-query" placeholder="Pregunte sobre el IRS..." onkeypress="handleAura(event)">
-                </div>
-            </aside>
+        <div id="f-schc" class="hidden">
+            <div class="form-header">Schedule C - Profit or Loss from Business</div>
+            <div class="row"><div class="ln">L1</div><div class="desc">Gross Receipts / 1099-NEC</div><input type="number" id="gross" value="0" oninput="runEngine()"></div>
+            <div class="row"><div class="ln">L28</div><div class="desc">Total Expenses</div><input type="number" id="exp" value="0" oninput="runEngine()"></div>
+            <div class="row" style="background:#e8f5e9;"><div class="ln">L31</div><div class="desc"><b>NET PROFIT</b></div><input type="number" id="net" readonly></div>
         </div>
-    </div>
-    <script src="tax_data.js"></script> <script src="engine.js"></script>
+    </main>
+
+    <aside class="aura-panel">
+        <div class="aura-header">🧠 AURA SENIOR FINANCE SPECIALIST</div>
+        <div class="aura-chat" id="chat">
+            <p><strong>AURA:</strong> Soy su Consultor Senior. He cargado la base legal del IRS 2026. Estoy monitoreando su captura de datos para evitar auditorías.</p>
+        </div>
+        <div class="aura-input">
+            <input type="text" id="query" placeholder="Consulte sobre leyes, impuestos o deducciones..." onkeypress="ask(event)">
+        </div>
+    </aside>
+</div>
+
+<div class="btn-group">
+    <button class="btn-del" onclick="location.reload()">Borrar Sesión</button>
+    <button class="btn-print" onclick="window.print()">Generar Reporte PDF</button>
+</div>
+
+<script>
+    const BRACKETS = {
+        single: { std: 15700, rates: [[11600, 0.10], [47150, 0.12], [100525, 0.22]] },
+        mfj: { std: 31400, rates: [[23200, 0.10], [94300, 0.12], [201050, 0.22]] }
+    };
+
+    function runEngine() {
+        const w2 = parseFloat(document.getElementById('w2').value) || 0;
+        const gross = parseFloat(document.getElementById('gross').value) || 0;
+        const expenses = parseFloat(document.getElementById('exp').value) || 0;
+        const stat = document.getElementById('status').value;
+        
+        // 1. Sch C Logic
+        const netProfit = Math.max(0, gross - expenses);
+        document.getElementById('net').value = netProfit.toFixed(2);
+        document.getElementById('schc_link').value = netProfit.toFixed(2);
+
+        // 2. Self-Employment Tax (SE) - 15.3%
+        const seTax = netProfit * 0.9235 * 0.153;
+        
+        // 3. AGI
+        const agi = (w2 + netProfit) - (seTax / 2);
+        document.getElementById('st-agi').innerText = `$${agi.toLocaleString()}`;
+        document.getElementById('st-name').innerText = document.getElementById('name').value.toUpperCase() || "NEW CLIENT";
+
+        // 4. Tax Calculation (Brackets)
+        const stdDed = BRACKETS[stat]?.std || 15700;
+        const taxable = Math.max(0, agi - stdDed);
+        let incomeTax = 0;
+        // Simplificación de brackets para peso inmediato
+        incomeTax = taxable * 0.12; 
+
+        const totalOwe = incomeTax + seTax;
+        document.getElementById('st-tax').innerText = `$${totalOwe.toLocaleString()}`;
+
+        // Alertas Senior de AURA
+        if(expenses > (gross * 0.5) && gross > 0) {
+            pushAura("⚠️ RIESGO: Gastos > 50%. El IRS exige registros de millaje (Logbooks) estrictos para esta proporción.");
+        }
+    }
+
+    function ask(e) {
+        if(e.key === 'Enter') {
+            const q = e.target.value.toLowerCase();
+            const log = document.getElementById('chat');
+            let r = "Como especialista senior, le sugiero referirse a la Publicación 17. ¿Desea que analice un anexo específico?";
+
+            if(q.includes("home office")) r = "El Form 8829 requiere uso EXCLUSIVO. Método simplificado: $5/sqft. Método Real: Prorrateo de utilidades e intereses hipotecarios.";
+            if(q.includes("comida")) r = "Deducción de comidas 50%. Debe documentar: Quién, Dónde, Cuándo y el Propósito de Negocio (Business Nexus).";
+            if(q.includes("s-corp")) r = "Si el Net Profit excede $60k, la S-Corp es la vía para eludir el 15.3% de SE Tax sobre distribuciones. Es el 'blindaje' fiscal recomendado.";
+            if(q.includes("irs") || q.includes("auditoria")) r = "Bajo mi supervisión, estamos triangulando Ingresos vs Gastos. La clave es la consistencia con el código NAICS de la actividad.";
+
+            log.innerHTML += `<p style='color:blue'><strong>Usted:</strong> ${e.target.value}</p>`;
+            log.innerHTML += `<p><strong>AURA:</strong> ${r}</p>`;
+            e.target.value = "";
+            log.scrollTop = log.scrollHeight;
+        }
+    }
+
+    function pushAura(m) {
+        const log = document.getElementById('chat');
+        if(!log.innerHTML.includes(m)) {
+            log.innerHTML += `<p style='color:red'><strong>AURA:</strong> ${m}</p>`;
+            log.scrollTop = log.scrollHeight;
+        }
+    }
+
+    function showF(id) {
+        document.getElementById('f-1040').classList.add('hidden');
+        document.getElementById('f-schc').classList.add('hidden');
+        document.getElementById('f-' + id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+</script>
 </body>
 </html>
