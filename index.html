@@ -4,170 +4,212 @@
     <meta charset="UTF-8">
     <title>AL CIELO - Senior Tax Intelligence Portal</title>
     <style>
-        :root { --drake-blue: #003366; --gold: #b8860b; --irs-gray: #f4f4f4; }
-        body { font-family: 'Segoe UI', Arial; margin: 0; background: #2c3e50; color: #333; height: 100vh; display: flex; flex-direction: column; }
+        :root { --drake-blue: #003366; --gold: #b8860b; --irs-gray: #f4f4f4; --danger: #c0392b; --success: #27ae60; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #2c3e50; color: #333; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Barra de Estado Profesional */
-        .status-bar { background: #000; color: #00ff00; padding: 12px 25px; display: flex; justify-content: space-between; font-family: 'Courier New', monospace; font-size: 1.2rem; border-bottom: 2px solid var(--gold); }
+        /* Dashboard Header */
+        .status-bar { background: #000; color: #00ff00; padding: 12px 25px; display: flex; justify-content: space-between; font-family: 'Courier New', monospace; font-size: 1.1rem; border-bottom: 2px solid var(--gold); }
         
-        .main-layout { display: grid; grid-template-columns: 220px 1fr 350px; flex-grow: 1; overflow: hidden; }
+        .main-layout { display: grid; grid-template-columns: 240px 1fr 380px; flex-grow: 1; overflow: hidden; }
         
-        /* Navegación Drake */
-        .sidebar { background: #1a252f; color: white; padding: 15px; border-right: 1px solid #000; }
-        .nav-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 0.85rem; transition: 0.3s; }
+        /* Navigation Sidebar */
+        .sidebar { background: #1a252f; color: white; padding: 10px; border-right: 1px solid #000; }
+        .sidebar h3 { font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-top: 20px; padding-left: 10px; }
+        .nav-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 0.85rem; transition: 0.2s; }
         .nav-item:hover, .active { background: var(--gold); color: black; font-weight: bold; }
 
-        /* Workspace */
-        .workspace { background: white; padding: 30px; overflow-y: auto; border-right: 1px solid #ccc; }
-        .form-header { background: #eee; padding: 10px; border: 1px solid #999; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
-        .row { display: grid; grid-template-columns: 60px 1fr 200px; border-bottom: 1px solid #eee; align-items: center; }
-        .ln { background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid #ccc; }
-        input, select { width: 100%; border: 1px solid transparent; padding: 10px; text-align: right; font-size: 1.1rem; background: #fffde7; outline: none; }
+        /* Workspace Core */
+        .workspace { background: white; padding: 25px; overflow-y: auto; border-right: 1px solid #ccc; position: relative; }
+        .form-header { background: #eee; padding: 10px; border: 1px solid #999; font-weight: bold; margin-bottom: 15px; font-size: 0.9rem; color: var(--drake-blue); }
+        .row { display: grid; grid-template-columns: 50px 1fr 180px; border-bottom: 1px solid #eee; align-items: center; }
+        .ln { background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold; border-right: 1px solid #ccc; font-size: 0.8rem; }
+        .desc { padding-left: 10px; font-size: 0.85rem; }
+        input, select { width: 100%; border: none; padding: 10px; text-align: right; font-size: 1rem; background: #fffde7; outline: none; box-sizing: border-box; }
         input:focus { background: white; border-bottom: 2px solid var(--gold); }
+        .highlight-row { background: #e1f5fe !important; font-weight: bold; }
 
-        /* IA AURA Senior Finance Specialist */
+        /* AURA SPECIALIST PANEL */
         .aura-panel { background: #fdfefe; display: flex; flex-direction: column; border-left: 2px solid var(--gold); }
-        .aura-header { background: var(--drake-blue); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1rem; }
-        .aura-chat { flex-grow: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; font-size: 0.9rem; line-height: 1.5; }
-        .aura-input { padding: 15px; border-top: 1px solid #ccc; background: white; }
-        #query { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; }
+        .aura-header { background: var(--drake-blue); color: white; padding: 15px; text-align: center; font-weight: bold; }
+        .aura-chat { flex-grow: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; font-size: 0.85rem; }
+        .aura-input-box { padding: 15px; border-top: 1px solid #ccc; background: white; }
+        #query { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9rem; }
+        .bot-msg { margin-bottom: 15px; padding: 10px; border-radius: 5px; background: #e8f5e9; border-left: 4px solid var(--success); }
+        .alert-msg { margin-bottom: 15px; padding: 10px; border-radius: 5px; background: #ffebee; border-left: 4px solid var(--danger); font-weight: bold; }
 
-        .btn-group { padding: 20px; background: #bdc3c7; display: flex; gap: 15px; justify-content: flex-end; }
-        button { padding: 12px 25px; cursor: pointer; font-weight: bold; border: none; text-transform: uppercase; }
-        .btn-print { background: var(--drake-blue); color: white; }
-        .btn-del { background: #c0392b; color: white; }
+        /* Controls */
+        .footer-nav { padding: 15px; background: #bdc3c7; display: flex; gap: 10px; justify-content: flex-end; }
+        button { padding: 10px 20px; cursor: pointer; font-weight: bold; border: none; border-radius: 3px; }
+        .btn-p { background: var(--drake-blue); color: white; }
+        .btn-d { background: var(--danger); color: white; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="status-bar">
-    <span>TAXPAYER: <span id="st-name">NEW CLIENT</span></span>
-    <span>AGI: <span id="st-agi">$0.00</span></span>
-    <span>REFUND/OWE: <span id="st-tax" style="color: #ff3d00;">$0.00</span></span>
+    <span>[CLIENT] <span id="st-name">NOT SELECTED</span></span>
+    <span>[AGI] <span id="st-agi">$0.00</span></span>
+    <span>[TAX OWE] <span id="st-tax">$0.00</span></span>
+    <span>[2026 ENGINE ACTIVE]</span>
 </div>
 
 <div class="main-layout">
     <nav class="sidebar">
-        <div class="nav-item active" onclick="showF('1040')">Form 1040 (Main)</div>
+        <h3>Income & Returns</h3>
+        <div class="nav-item active" onclick="showF('1040')">Form 1040 (Summary)</div>
         <div class="nav-item" onclick="showF('schc')">Schedule C (Business)</div>
-        <div class="nav-item" onclick="showF('schse')">Schedule SE (Tax)</div>
-        <div class="nav-item" onclick="showF('8829')">Form 8829 (Office)</div>
+        <h3>Adjustments</h3>
+        <div class="nav-item" onclick="showF('4562')">Form 4562 (Depreciation)</div>
+        <div class="nav-item" onclick="showF('8829')">Form 8829 (Home Office)</div>
+        <div class="nav-item" onclick="showF('se')">Schedule SE (Self-Emp)</div>
     </nav>
 
     <main class="workspace">
         <div id="f-1040">
-            <div class="form-header">Form 1040 - Individual Tax Return 2026</div>
-            <div class="row"><div class="ln">NAME</div><div class="desc">Full Legal Name</div><input type="text" id="name" oninput="runEngine()"></div>
-            <div class="row"><div class="ln">STAT</div><div class="desc">Filing Status</div>
-                <select id="status" onchange="runEngine()">
+            <div class="form-header">Form 1040 - Main Page Summary</div>
+            <div class="row"><div class="ln">ID</div><div class="desc">Taxpayer Full Name</div><input type="text" id="name" placeholder="John Doe" oninput="run()"></div>
+            <div class="row"><div class="ln">S</div><div class="desc">Filing Status</div>
+                <select id="stat" onchange="run()">
                     <option value="single">Single</option>
                     <option value="mfj">Married Filing Jointly</option>
                     <option value="hoh">Head of Household</option>
                 </select>
             </div>
-            <div class="row"><div class="ln">L1</div><div class="desc">Wages (W-2)</div><input type="number" id="w2" value="0" oninput="runEngine()"></div>
-            <div class="row"><div class="ln">L8</div><div class="desc">Business Income (Sch C)</div><input type="number" id="schc_link" readonly></div>
+            <div class="row"><div class="ln">1z</div><div class="desc">Wages (W-2 Income)</div><input type="number" id="w2" value="0" oninput="run()"></div>
+            <div class="row"><div class="ln">8</div><div class="desc">Business Income (Sch C Transfer)</div><input type="number" id="sc_link" readonly></div>
+            <div class="row highlight-row"><div class="ln">11</div><div class="desc">ADJUSTED GROSS INCOME (AGI)</div><input type="number" id="agi_val" readonly></div>
         </div>
 
         <div id="f-schc" class="hidden">
-            <div class="form-header">Schedule C - Profit or Loss from Business</div>
-            <div class="row"><div class="ln">L1</div><div class="desc">Gross Receipts / 1099-NEC</div><input type="number" id="gross" value="0" oninput="runEngine()"></div>
-            <div class="row"><div class="ln">L28</div><div class="desc">Total Expenses</div><input type="number" id="exp" value="0" oninput="runEngine()"></div>
-            <div class="row" style="background:#e8f5e9;"><div class="ln">L31</div><div class="desc"><b>NET PROFIT</b></div><input type="number" id="net" readonly></div>
+            <div class="form-header">Schedule C - Profit or Loss From Business</div>
+            <div class="row"><div class="ln">1</div><div class="desc">Gross Receipts or Sales</div><input type="number" id="gross" value="0" oninput="run()"></div>
+            <div class="row"><div class="ln">2</div><div class="desc">Returns and Allowances</div><input type="number" id="returns" value="0" oninput="run()"></div>
+            <div class="row"><div class="ln">13</div><div class="desc">Depreciation (From 4562)</div><input type="number" id="dep_link" readonly></div>
+            <div class="row"><div class="ln">28</div><div class="desc">Other Business Expenses</div><input type="number" id="exp" value="0" oninput="run()"></div>
+            <div class="row highlight-row"><div class="ln">31</div><div class="desc">NET PROFIT OR LOSS</div><input type="number" id="net" readonly></div>
+        </div>
+
+        <div id="f-4562" class="hidden">
+            <div class="form-header">Form 4562 - Depreciation and Amortization</div>
+            <div class="row"><div class="ln">179</div><div class="desc">Section 179 Expense Deduction</div><input type="number" id="s179" value="0" oninput="run()"></div>
+            <div class="row"><div class="ln">19</div><div class="desc">MACRS Depreciation (5-7 Years)</div><input type="number" id="macrs" value="0" oninput="run()"></div>
+            <div class="row highlight-row"><div class="ln">22</div><div class="desc">TOTAL DEPRECIATION</div><input type="number" id="total_dep" readonly></div>
         </div>
     </main>
 
     <aside class="aura-panel">
-        <div class="aura-header">🧠 AURA SENIOR FINANCE SPECIALIST</div>
+        <div class="aura-header">🧠 AURA SENIOR ADVISOR</div>
         <div class="aura-chat" id="chat">
-            <p><strong>AURA:</strong> Soy su Consultor Senior. He cargado la base legal del IRS 2026. Estoy monitoreando su captura de datos para evitar auditorías.</p>
+            <div class="bot-msg">AURA: Sistema Senior Activo. Estoy escaneando su 1040 en tiempo real. ¿Tiene dudas sobre la Sección 179 o la ley de QBI?</div>
         </div>
-        <div class="aura-input">
-            <input type="text" id="query" placeholder="Consulte sobre leyes, impuestos o deducciones..." onkeypress="ask(event)">
+        <div class="aura-input-box">
+            <input type="text" id="query" placeholder="Consulte leyes del IRS 2026..." onkeypress="ask(event)">
         </div>
     </aside>
 </div>
 
-<div class="btn-group">
-    <button class="btn-del" onclick="location.reload()">Borrar Sesión</button>
-    <button class="btn-print" onclick="window.print()">Generar Reporte PDF</button>
+<div class="footer-nav">
+    <button class="btn-d" onclick="location.reload()">Borrar Sesión</button>
+    <button class="btn-p" onclick="window.print()">Exportar Transmisión PDF</button>
 </div>
 
 <script>
-    const BRACKETS = {
-        single: { std: 15700, rates: [[11600, 0.10], [47150, 0.12], [100525, 0.22]] },
-        mfj: { std: 31400, rates: [[23200, 0.10], [94300, 0.12], [201050, 0.22]] }
-    };
+    const DED = { single: 15700, mfj: 31400, hoh: 23550 };
 
-    function runEngine() {
+    function run() {
+        // Data Retrieval
+        const name = document.getElementById('name').value.toUpperCase();
         const w2 = parseFloat(document.getElementById('w2').value) || 0;
         const gross = parseFloat(document.getElementById('gross').value) || 0;
-        const expenses = parseFloat(document.getElementById('exp').value) || 0;
-        const stat = document.getElementById('status').value;
-        
-        // 1. Sch C Logic
-        const netProfit = Math.max(0, gross - expenses);
+        const ret = parseFloat(document.getElementById('returns').value) || 0;
+        const exp = parseFloat(document.getElementById('exp').value) || 0;
+        const s179 = parseFloat(document.getElementById('s179').value) || 0;
+        const macrs = parseFloat(document.getElementById('macrs').value) || 0;
+        const stat = document.getElementById('stat').value;
+
+        // 1. Depreciation Engine
+        const totalDep = s179 + macrs;
+        document.getElementById('total_dep').value = totalDep.toFixed(2);
+        document.getElementById('dep_link').value = totalDep.toFixed(2);
+
+        // 2. Schedule C Engine
+        const netProfit = Math.max(0, (gross - ret) - exp - totalDep);
         document.getElementById('net').value = netProfit.toFixed(2);
-        document.getElementById('schc_link').value = netProfit.toFixed(2);
+        document.getElementById('sc_link').value = netProfit.toFixed(2);
 
-        // 2. Self-Employment Tax (SE) - 15.3%
+        // 3. SE Tax Engine (Self-Employment)
         const seTax = netProfit * 0.9235 * 0.153;
-        
-        // 3. AGI
+
+        // 4. AGI Engine
         const agi = (w2 + netProfit) - (seTax / 2);
+        document.getElementById('agi_val').value = agi.toFixed(2);
+        
+        // Update Status Bar
+        document.getElementById('st-name').innerText = name || "NEW CLIENT";
         document.getElementById('st-agi').innerText = `$${agi.toLocaleString()}`;
-        document.getElementById('st-name').innerText = document.getElementById('name').value.toUpperCase() || "NEW CLIENT";
 
-        // 4. Tax Calculation (Brackets)
-        const stdDed = BRACKETS[stat]?.std || 15700;
-        const taxable = Math.max(0, agi - stdDed);
-        let incomeTax = 0;
-        // Simplificación de brackets para peso inmediato
-        incomeTax = taxable * 0.12; 
+        // 5. Tax Bracket Logic (Simplified Progresive)
+        const taxable = Math.max(0, agi - DED[stat]);
+        let tax = 0;
+        if(taxable > 100000) tax = taxable * 0.24;
+        else if(taxable > 50000) tax = taxable * 0.22;
+        else tax = taxable * 0.12;
 
-        const totalOwe = incomeTax + seTax;
-        document.getElementById('st-tax').innerText = `$${totalOwe.toLocaleString()}`;
+        const finalDebt = tax + seTax;
+        document.getElementById('st-tax').innerText = `$${finalDebt.toLocaleString()}`;
 
-        // Alertas Senior de AURA
-        if(expenses > (gross * 0.5) && gross > 0) {
-            pushAura("⚠️ RIESGO: Gastos > 50%. El IRS exige registros de millaje (Logbooks) estrictos para esta proporción.");
+        // IA ADVISORY LOGIC (PREVENTIVE)
+        audit(gross, exp, netProfit, s179);
+    }
+
+    function audit(g, e, n, s) {
+        const log = document.getElementById('chat');
+        if(e > (g * 0.6) && g > 0) {
+            push("⚠️ ALERTA SENIOR: Gastos mayores al 60%. Esto disparará una auditoría de 'Hobby Loss'. Documente su intención de lucro.", "alert-msg");
+        }
+        if(n > 60000) {
+            push("💡 ESTRATEGIA AURA: Su utilidad supera los $60k. Recomiende conversión a S-Corp para ahorrar el 15.3% de impuestos sobre distribuciones.", "bot-msg");
+        }
+        if(s > 0 && g < s) {
+            push("🚫 ERROR LEGAL: La Sección 179 no puede crear una pérdida neta. El excedente debe ser arrastrado (Carryover).", "alert-msg");
         }
     }
 
     function ask(e) {
         if(e.key === 'Enter') {
             const q = e.target.value.toLowerCase();
-            const log = document.getElementById('chat');
-            let r = "Como especialista senior, le sugiero referirse a la Publicación 17. ¿Desea que analice un anexo específico?";
+            let r = "Como su Senior Advisor, le sugiero revisar la Publicación 17. ¿Desea que verifique el umbral de QBI?";
 
-            if(q.includes("home office")) r = "El Form 8829 requiere uso EXCLUSIVO. Método simplificado: $5/sqft. Método Real: Prorrateo de utilidades e intereses hipotecarios.";
-            if(q.includes("comida")) r = "Deducción de comidas 50%. Debe documentar: Quién, Dónde, Cuándo y el Propósito de Negocio (Business Nexus).";
-            if(q.includes("s-corp")) r = "Si el Net Profit excede $60k, la S-Corp es la vía para eludir el 15.3% de SE Tax sobre distribuciones. Es el 'blindaje' fiscal recomendado.";
-            if(q.includes("irs") || q.includes("auditoria")) r = "Bajo mi supervisión, estamos triangulando Ingresos vs Gastos. La clave es la consistencia con el código NAICS de la actividad.";
+            if(q.includes("179")) r = "La Sección 179 permite deducir el 100% de equipo (como camiones pesados) en el año de compra, siempre que se use >50% para negocio.";
+            if(q.includes("depreciacion")) r = "Utilizamos MACRS para activos fijos. Para vehículos de pasajeros, aplican límites de 'Luxury Auto', pero para carga es ilimitado bajo 179.";
+            if(q.includes("qbi")) r = "La deducción 199A permite excluir el 20% de su ingreso neto del impuesto sobre la renta si califica como negocio pass-through.";
+            if(q.includes("irs") || q.includes("miedo")) r = "Bajo mi asesoría técnica, cada línea está respaldada por el Internal Revenue Code. La clave es la consistencia de los datos.";
 
-            log.innerHTML += `<p style='color:blue'><strong>Usted:</strong> ${e.target.value}</p>`;
-            log.innerHTML += `<p><strong>AURA:</strong> ${r}</p>`;
+            push(`<strong>Usted:</strong> ${e.target.value}`, "bot-msg", true);
+            push(`<strong>AURA:</strong> ${r}`, "bot-msg");
             e.target.value = "";
-            log.scrollTop = log.scrollHeight;
         }
     }
 
-    function pushAura(m) {
-        const log = document.getElementById('chat');
-        if(!log.innerHTML.includes(m)) {
-            log.innerHTML += `<p style='color:red'><strong>AURA:</strong> ${m}</p>`;
-            log.scrollTop = log.scrollHeight;
-        }
+    function push(m, cls, isUser = false) {
+        const chat = document.getElementById('chat');
+        const div = document.createElement('div');
+        div.className = cls;
+        if(isUser) div.style.background = "#fff";
+        div.innerHTML = m;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
     }
 
     function showF(id) {
-        document.getElementById('f-1040').classList.add('hidden');
-        document.getElementById('f-schc').classList.add('hidden');
+        document.querySelectorAll('.workspace > div').forEach(d => d.classList.add('hidden'));
         document.getElementById('f-' + id).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         event.target.classList.add('active');
     }
+
+    run(); // Initialize
 </script>
 </body>
 </html>
